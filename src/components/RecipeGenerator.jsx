@@ -184,24 +184,25 @@ export default function RecipeGenerator() {
             {!hasSubscription && !userEmail && (
                 <Card className="bg-orange-50 border-orange-200">
                     <CardContent className="pt-6">
-                        <div className="flex flex-col sm:flex-row gap-3 items-center">
+                        <div className="flex flex-col gap-3">
                             <Input
                                 type="email"
-                                placeholder="Enter your email for subscription"
+                                placeholder="your@email.com"
                                 value={userEmail}
                                 onChange={(e) => setUserEmail(e.target.value)}
-                                className="flex-1"
+                                className="text-lg py-6"
+                                autoFocus
                             />
                             <Button onClick={() => {
                                 if (userEmail) {
                                     localStorage.setItem('userEmail', userEmail);
                                 }
-                            }} className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700">
-                                Save Email
+                            }} className="w-full py-6 text-lg bg-orange-600 hover:bg-orange-700">
+                                Save Email for Easy Checkout
                             </Button>
                         </div>
-                        <p className="text-xs text-gray-600 mt-2 text-center">
-                            Save your email now for easy checkout when you're ready to subscribe
+                        <p className="text-xs text-gray-600 mt-3 text-center">
+                            We'll remember your email for when you're ready to subscribe
                         </p>
                     </CardContent>
                 </Card>
