@@ -16,6 +16,13 @@ export default function RecipeGenerator() {
     const [saving, setSaving] = useState(false);
     const [hasSubscription, setHasSubscription] = useState(false);
     const [checkingSubscription, setCheckingSubscription] = useState(false);
+    const [recipeCount, setRecipeCount] = useState(0);
+
+    React.useEffect(() => {
+        const count = parseInt(localStorage.getItem('recipeCount') || '0');
+        setRecipeCount(count);
+        checkSubscription();
+    }, []);
 
     const checkSubscription = async () => {
         setCheckingSubscription(true);
@@ -48,6 +55,12 @@ export default function RecipeGenerator() {
     const generateRecipe = async () => {
         if (!ingredients.trim()) return;
 
+        // Check if user has reached the limit
+        if (recipeCount >= 3 && !hasSubscription) {
+            handleSubscribe();
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await base44.integrations.Core.InvokeLLM({
@@ -68,6 +81,11 @@ export default function RecipeGenerator() {
                 }
             });
             setRecipe(response);
+            
+            // Increment recipe count
+            const newCount = recipeCount + 1;
+            setRecipeCount(newCount);
+            localStorage.setItem('recipeCount', newCount.toString());
         } catch (error) {
             console.error('Recipe generation failed:', error);
         } finally {
@@ -121,6 +139,11 @@ export default function RecipeGenerator() {
             <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">Recipe Generator</h1>
                 <p className="text-gray-600">Enter your ingredients and let AI create a delicious recipe</p>
+                {!hasSubscription && (
+                    <p className="text-sm text-orange-600 mt-2 font-medium">
+                        {recipeCount}/3 free recipes used
+                    </p>
+                )}
             </div>
 
             <Card>
@@ -143,6 +166,11 @@ export default function RecipeGenerator() {
                             <>
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                                 Generating Recipe...
+                            </>
+                        ) : recipeCount >= 3 && !hasSubscription ? (
+                            <>
+                                <Lock className="w-4 h-4 mr-2" />
+                                Subscribe to Generate More ($2.99/month)
                             </>
                         ) : (
                             <>
