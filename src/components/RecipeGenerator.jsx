@@ -59,24 +59,7 @@ export default function RecipeGenerator() {
     };
 
     const handleSubscribe = async () => {
-        if (!userEmail) {
-            setShowEmailInput(true);
-            return;
-        }
-
-        if (window.self !== window.top) {
-            alert('Checkout works only from a published app. Please open the app in a new tab.');
-            return;
-        }
-
-        try {
-            const response = await base44.functions.invoke('createCheckoutSession', { email: userEmail });
-            localStorage.setItem('userEmail', userEmail);
-            window.location.href = response.data.url;
-        } catch (error) {
-            console.error('Checkout failed:', error);
-            alert('Checkout failed. Please try again.');
-        }
+        window.location.href = '/Checkout';
     };
 
     const generateRecipe = async () => {
