@@ -17,17 +17,16 @@ export default function RecipeGenerator() {
     const [hasSubscription, setHasSubscription] = useState(false);
     const [checkingSubscription, setCheckingSubscription] = useState(false);
     const [recipeCount, setRecipeCount] = useState(0);
-    const [userEmail, setUserEmail] = useState('');
+    const [userEmail, setUserEmail] = useState(() => localStorage.getItem('userEmail') || '');
     const [showEmailInput, setShowEmailInput] = useState(false);
 
     React.useEffect(() => {
         const count = parseInt(localStorage.getItem('recipeCount') || '0');
-        const email = localStorage.getItem('userEmail') || '';
+        const email = userEmail;
         const params = new URLSearchParams(window.location.search);
         const sessionId = params.get('session_id');
         
         setRecipeCount(count);
-        setUserEmail(email);
         
         if (sessionId && email) {
             localStorage.setItem('hasSubscription', 'true');
