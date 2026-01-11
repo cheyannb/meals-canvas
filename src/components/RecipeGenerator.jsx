@@ -180,7 +180,7 @@ export default function RecipeGenerator() {
                 )}
             </div>
 
-            {!hasSubscription && !userEmail && (
+            {!hasSubscription && (
                 <Card className="bg-orange-50 border-orange-200">
                     <CardContent className="pt-6">
                         <div className="flex flex-col gap-3">
