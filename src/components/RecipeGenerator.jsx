@@ -19,6 +19,7 @@ export default function RecipeGenerator() {
     const [recipeCount, setRecipeCount] = useState(0);
     const [userEmail, setUserEmail] = useState(() => localStorage.getItem('userEmail') || '');
     const [showEmailInput, setShowEmailInput] = useState(false);
+    const [emailSaved, setEmailSaved] = useState(false);
 
     React.useEffect(() => {
         const count = parseInt(localStorage.getItem('recipeCount') || '0');
@@ -180,7 +181,7 @@ export default function RecipeGenerator() {
                 )}
             </div>
 
-            {!hasSubscription && (
+            {!hasSubscription && !emailSaved && (
                 <Card className="bg-orange-50 border-orange-200">
                     <CardContent className="pt-6">
                         <div className="flex flex-col gap-3">
@@ -196,6 +197,7 @@ export default function RecipeGenerator() {
                                 onClick={() => {
                                     if (userEmail) {
                                         localStorage.setItem('userEmail', userEmail);
+                                        setEmailSaved(true);
                                         alert('Email saved! You can now generate recipes.');
                                     }
                                 }} 
