@@ -181,21 +181,28 @@ export default function RecipeGenerator() {
                 )}
             </div>
 
-            {showEmailInput && !userEmail && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Enter Your Email to Subscribe</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <Input
-                            type="email"
-                            placeholder="your@email.com"
-                            value={userEmail}
-                            onChange={(e) => setUserEmail(e.target.value)}
-                        />
-                        <Button onClick={handleSubscribe} className="w-full">
-                            Continue to Checkout
-                        </Button>
+            {!hasSubscription && !userEmail && (
+                <Card className="bg-orange-50 border-orange-200">
+                    <CardContent className="pt-6">
+                        <div className="flex flex-col sm:flex-row gap-3 items-center">
+                            <Input
+                                type="email"
+                                placeholder="Enter your email for subscription"
+                                value={userEmail}
+                                onChange={(e) => setUserEmail(e.target.value)}
+                                className="flex-1"
+                            />
+                            <Button onClick={() => {
+                                if (userEmail) {
+                                    localStorage.setItem('userEmail', userEmail);
+                                }
+                            }} className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700">
+                                Save Email
+                            </Button>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-2 text-center">
+                            Save your email now for easy checkout when you're ready to subscribe
+                        </p>
                     </CardContent>
                 </Card>
             )}
@@ -303,7 +310,7 @@ export default function RecipeGenerator() {
                         <Button 
                             onClick={saveRecipe} 
                             disabled={saving || checkingSubscription}
-                            className="w-full bg-green-600 hover:bg-green-700"
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-lg py-6"
                         >
                             {saving || checkingSubscription ? (
                                 <>
@@ -312,8 +319,8 @@ export default function RecipeGenerator() {
                                 </>
                             ) : (
                                 <>
-                                    {hasSubscription ? <Save className="w-4 h-4 mr-2" /> : <Lock className="w-4 h-4 mr-2" />}
-                                    {hasSubscription ? 'Save Recipe' : 'Subscribe to Save ($2.99/month)'}
+                                    {hasSubscription ? <Save className="w-5 h-5 mr-2" /> : <Lock className="w-5 h-5 mr-2" />}
+                                    {hasSubscription ? 'Save Recipe' : 'Subscribe to Save - $2.99/month'}
                                 </>
                             )}
                         </Button>
