@@ -82,12 +82,6 @@ export default function RecipeGenerator() {
     const generateRecipe = async () => {
         if (!ingredients.trim()) return;
 
-        // Check if user has reached the limit
-        if (recipeCount >= 3 && !hasSubscription) {
-            handleSubscribe();
-            return;
-        }
-
         setLoading(true);
         try {
             const response = await base44.integrations.Core.InvokeLLM({
@@ -109,10 +103,12 @@ export default function RecipeGenerator() {
             });
             setRecipe(response);
             
-            // Increment recipe count
-            const newCount = recipeCount + 1;
-            setRecipeCount(newCount);
-            localStorage.setItem('recipeCount', newCount.toString());
+            // Increment recipe count only if no subscription
+            if (!hasSubscription) {
+                const newCount = recipeCount + 1;
+                setRecipeCount(newCount);
+                localStorage.setItem('recipeCount', newCount.toString());
+            }
         } catch (error) {
             console.error('Recipe generation failed:', error);
         } finally {
@@ -206,7 +202,7 @@ export default function RecipeGenerator() {
                     />
                     <Button 
                         onClick={generateRecipe} 
-                        disabled={loading || !ingredients.trim()}
+                        disabled={loading || !ingredients.trim() || (recipeCount >= 3 && !hasSubscription)}
                         className="w-full"
                     >
                         {loading ? (
