@@ -1,15 +1,13 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import Stripe from 'npm:stripe';
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"));
 
 Deno.serve(async (req) => {
     try {
-        const base44 = createClientFromRequest(req);
-        const user = await base44.auth.me();
+        const { email } = await req.json();
 
-        if (!user) {
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        if (!email) {
+            return Response.json({ error: 'Email is required' }, { status: 400 });
         }
 
         const session = await stripe.checkout.sessions.create({
@@ -19,12 +17,12 @@ Deno.serve(async (req) => {
                 quantity: 1,
             }],
             mode: 'subscription',
-            success_url: `${req.headers.get('origin')}?success=true`,
+            success_url: `${req.headers.get('origin')}?success=true&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${req.headers.get('origin')}?canceled=true`,
-            customer_email: user.email,
+            customer_email: email,
             metadata: {
                 base44_app_id: Deno.env.get("BASE44_APP_ID"),
-                user_id: user.id
+                customer_email: email
             }
         });
 

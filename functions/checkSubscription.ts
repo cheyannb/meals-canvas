@@ -1,28 +1,33 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import Stripe from 'npm:stripe';
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"));
 
 Deno.serve(async (req) => {
     try {
-        const base44 = createClientFromRequest(req);
-        const user = await base44.auth.me();
+        const { email } = await req.json();
 
-        if (!user) {
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        if (!email) {
+            return Response.json({ error: 'Email is required' }, { status: 400 });
+        }
+
+        const customers = await stripe.customers.list({
+            email: email,
+            limit: 1
+        });
+
+        if (customers.data.length === 0) {
+            return Response.json({ hasActiveSubscription: false });
         }
 
         const subscriptions = await stripe.subscriptions.list({
-            limit: 100,
+            customer: customers.data[0].id,
+            status: 'active',
+            limit: 1
         });
 
-        const activeSubscription = subscriptions.data.find(sub => 
-            sub.metadata?.user_id === user.id && sub.status === 'active'
-        );
-
         return Response.json({ 
-            hasActiveSubscription: !!activeSubscription,
-            subscription: activeSubscription || null
+            hasActiveSubscription: subscriptions.data.length > 0,
+            subscription: subscriptions.data[0] || null
         });
     } catch (error) {
         console.error('Subscription check error:', error);

@@ -17,18 +17,38 @@ export default function RecipeGenerator() {
     const [hasSubscription, setHasSubscription] = useState(false);
     const [checkingSubscription, setCheckingSubscription] = useState(false);
     const [recipeCount, setRecipeCount] = useState(0);
+    const [userEmail, setUserEmail] = useState('');
+    const [showEmailInput, setShowEmailInput] = useState(false);
 
     React.useEffect(() => {
         const count = parseInt(localStorage.getItem('recipeCount') || '0');
+        const email = localStorage.getItem('userEmail') || '';
+        const params = new URLSearchParams(window.location.search);
+        const sessionId = params.get('session_id');
+        
         setRecipeCount(count);
-        checkSubscription();
+        setUserEmail(email);
+        
+        if (sessionId && email) {
+            localStorage.setItem('hasSubscription', 'true');
+            setHasSubscription(true);
+        }
+        
+        if (email) {
+            checkSubscription(email);
+        }
     }, []);
 
-    const checkSubscription = async () => {
+    const checkSubscription = async (email) => {
+        if (!email) return false;
+        
         setCheckingSubscription(true);
         try {
-            const response = await base44.functions.invoke('checkSubscription', {});
+            const response = await base44.functions.invoke('checkSubscription', { email });
             setHasSubscription(response.data.hasActiveSubscription);
+            if (response.data.hasActiveSubscription) {
+                localStorage.setItem('hasSubscription', 'true');
+            }
             return response.data.hasActiveSubscription;
         } catch (error) {
             console.error('Subscription check failed:', error);
@@ -39,16 +59,23 @@ export default function RecipeGenerator() {
     };
 
     const handleSubscribe = async () => {
+        if (!userEmail) {
+            setShowEmailInput(true);
+            return;
+        }
+
         if (window.self !== window.top) {
             alert('Checkout works only from a published app. Please open the app in a new tab.');
             return;
         }
 
         try {
-            const response = await base44.functions.invoke('createCheckoutSession', {});
+            const response = await base44.functions.invoke('createCheckoutSession', { email: userEmail });
+            localStorage.setItem('userEmail', userEmail);
             window.location.href = response.data.url;
         } catch (error) {
             console.error('Checkout failed:', error);
+            alert('Checkout failed. Please try again.');
         }
     };
 
@@ -110,7 +137,7 @@ export default function RecipeGenerator() {
     };
 
     const saveRecipe = async () => {
-        const active = await checkSubscription();
+        const active = await checkSubscription(userEmail);
         
         if (!active) {
             handleSubscribe();
@@ -121,7 +148,8 @@ export default function RecipeGenerator() {
         try {
             await base44.entities.Recipe.create({
                 ...recipe,
-                image_url: imageUrl
+                image_url: imageUrl,
+                user_email: userEmail
             });
             alert('Recipe saved successfully!');
             setRecipe(null);
@@ -145,6 +173,25 @@ export default function RecipeGenerator() {
                     </p>
                 )}
             </div>
+
+            {showEmailInput && !userEmail && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Enter Your Email to Subscribe</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <Input
+                            type="email"
+                            placeholder="your@email.com"
+                            value={userEmail}
+                            onChange={(e) => setUserEmail(e.target.value)}
+                        />
+                        <Button onClick={handleSubscribe} className="w-full">
+                            Continue to Checkout
+                        </Button>
+                    </CardContent>
+                </Card>
+            )}
 
             <Card>
                 <CardHeader>
