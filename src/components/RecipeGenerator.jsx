@@ -82,6 +82,12 @@ export default function RecipeGenerator() {
     const generateRecipe = async () => {
         if (!ingredients.trim()) return;
 
+        // Check if user has reached the limit
+        if (recipeCount >= 3 && !hasSubscription) {
+            handleSubscribe();
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await base44.integrations.Core.InvokeLLM({
@@ -202,7 +208,7 @@ export default function RecipeGenerator() {
                     />
                     <Button 
                         onClick={generateRecipe} 
-                        disabled={loading || !ingredients.trim() || (recipeCount >= 3 && !hasSubscription)}
+                        disabled={loading || !ingredients.trim()}
                         className="w-full"
                     >
                         {loading ? (
