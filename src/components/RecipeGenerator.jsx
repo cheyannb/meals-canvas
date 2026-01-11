@@ -139,6 +139,11 @@ export default function RecipeGenerator() {
     };
 
     const saveRecipe = async () => {
+        if (!userEmail) {
+            handleSubscribe();
+            return;
+        }
+        
         const active = await checkSubscription(userEmail);
         
         if (!active) {
