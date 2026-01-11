@@ -19,7 +19,7 @@ export default function RecipeGenerator() {
     const [recipeCount, setRecipeCount] = useState(0);
     const [userEmail, setUserEmail] = useState(() => localStorage.getItem('userEmail') || '');
     const [showEmailInput, setShowEmailInput] = useState(false);
-    const [emailSaved, setEmailSaved] = useState(false);
+    const [emailSaved, setEmailSaved] = useState(() => !!localStorage.getItem('userEmail'));
 
     React.useEffect(() => {
         const count = parseInt(localStorage.getItem('recipeCount') || '0');
