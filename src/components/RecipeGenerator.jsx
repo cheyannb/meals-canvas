@@ -192,11 +192,16 @@ export default function RecipeGenerator() {
                                 className="text-lg py-6"
                                 autoFocus
                             />
-                            <Button onClick={() => {
-                                if (userEmail) {
-                                    localStorage.setItem('userEmail', userEmail);
-                                }
-                            }} className="w-full py-6 text-lg bg-orange-600 hover:bg-orange-700">
+                            <Button 
+                                onClick={() => {
+                                    if (userEmail) {
+                                        localStorage.setItem('userEmail', userEmail);
+                                        alert('Email saved! You can now generate recipes.');
+                                    }
+                                }} 
+                                disabled={!userEmail || !userEmail.includes('@')}
+                                className="w-full py-6 text-lg bg-orange-600 hover:bg-orange-700"
+                            >
                                 Save Email for Easy Checkout
                             </Button>
                         </div>
