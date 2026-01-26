@@ -1,39 +1,31 @@
-**Welcome to your Base44 project** 
+# 🥘 MealsCanvas
 
-**About**
+**MealsCanvas** is an AI-powered recipe generator that turns the ingredients you already have into tasty, custom recipe ideas. Enter what’s in your fridge or pantry, and let the platform generate delicious dishes for you! ([Meals Canvas][1])
 
-View and Edit  your app on [Base44.com](http://Base44.com) 
+---
 
-This project contains everything you need to run your app locally.
+## 🚀 Features
 
-**Edit the code in your local development environment**
+* 🧠 **AI-Generated Recipes** — Generate unique recipes based on the ingredients you input. ([Meals Canvas][1])
+* 🍽️ **Recipe Suggestions** — Get creative meal ideas that match what you already have. ([Meals Canvas][1])
+* 📧 **Save & Email** — Save your recipes and have them emailed to you for later use. ([Meals Canvas][1])
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+---
 
-**Prerequisites:** 
+## 📌 How It Works
 
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
+1. **Visit** the site: [https://mealscanvas.com/](https://mealscanvas.com/)
+2. **Enter ingredients** — list what you have on hand. ([Meals Canvas][1])
+3. **Generate a recipe** — let the AI suggest a dish you can make right now. ([Meals Canvas][1])
+4. **Save** your favorite ideas on the site. ([Meals Canvas][1])
 
-```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
+---
 
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
-```
+## 🆕 Getting Started
 
-Run the app: `npm run dev`
+To generate your first recipe:
 
-**Publish your changes**
-
-Open [Base44.com](http://Base44.com) and click on Publish.
-
-**Docs & Support**
-
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+1. Open the app in your browser.
+2. In the input field, **type your ingredients** (e.g., “chicken, rice, spinach”).
+3. Click **Generate My Recipe**.
+4. Review your custom recipe and enjoy!
