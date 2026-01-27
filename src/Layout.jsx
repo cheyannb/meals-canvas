@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { ChefHat, BookOpen } from 'lucide-react';
+import { ChefHat, BookOpen, Lightbulb } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
     return (
@@ -35,7 +35,18 @@ export default function Layout({ children, currentPageName }) {
                                 <BookOpen className="w-4 h-4" />
                                 My Recipes
                             </Link>
-                        </div>
+                            <Link 
+                                to={createPageUrl('ReverseRecipe')} 
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                                    currentPageName === 'ReverseRecipe' 
+                                        ? 'bg-orange-100 text-orange-700 font-medium' 
+                                        : 'text-gray-600 hover:bg-gray-100'
+                                }`}
+                            >
+                                <Lightbulb className="w-4 h-4" />
+                                Reverse Recipe
+                            </Link>
+                            </div>
                     </div>
                 </div>
             </nav>
