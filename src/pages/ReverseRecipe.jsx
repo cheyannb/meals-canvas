@@ -2,13 +2,43 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, ChefHat } from "lucide-react";
+import { Loader2, ChefHat, Save, Lock } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 export default function ReverseRecipe() {
     const [mealDescription, setMealDescription] = useState('');
     const [ingredients, setIngredients] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [hasSubscription, setHasSubscription] = useState(false);
+    const [checkingSubscription, setCheckingSubscription] = useState(false);
+    const [userEmail, setUserEmail] = useState(() => localStorage.getItem('userEmail') || '');
+
+    React.useEffect(() => {
+        const email = userEmail;
+        if (email) {
+            checkSubscription(email);
+        }
+    }, []);
+
+    const checkSubscription = async (email) => {
+        if (!email) return false;
+        
+        setCheckingSubscription(true);
+        try {
+            const response = await base44.functions.invoke('checkSubscription', { email });
+            setHasSubscription(response.data.hasActiveSubscription);
+            if (response.data.hasActiveSubscription) {
+                localStorage.setItem('hasSubscription', 'true');
+            }
+            return response.data.hasActiveSubscription;
+        } catch (error) {
+            console.error('Subscription check failed:', error);
+            return false;
+        } finally {
+            setCheckingSubscription(false);
+        }
+    };
 
     const generateIngredients = async () => {
         if (!mealDescription.trim()) return;
@@ -33,6 +63,40 @@ export default function ReverseRecipe() {
             console.error('Ingredient generation failed:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const saveRecipe = async () => {
+        if (!userEmail) {
+            window.location.href = '/Checkout';
+            return;
+        }
+        
+        const active = await checkSubscription(userEmail);
+        
+        if (!active) {
+            window.location.href = '/Checkout';
+            return;
+        }
+
+        setSaving(true);
+        try {
+            await base44.entities.Recipe.create({
+                title: ingredients.dish_name,
+                ingredients: ingredients.ingredients,
+                instructions: ["This recipe was generated from a meal description. Add your cooking instructions here."],
+                prep_time: ingredients.estimated_prep_time,
+                cook_time: ingredients.estimated_cook_time,
+                servings: ingredients.serving_size,
+                user_email: userEmail
+            });
+            alert('Recipe saved successfully!');
+            setIngredients(null);
+            setMealDescription('');
+        } catch (error) {
+            console.error('Save failed:', error);
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -97,6 +161,24 @@ export default function ReverseRecipe() {
                                 ))}
                             </ul>
                         </div>
+
+                        <Button 
+                            onClick={saveRecipe} 
+                            disabled={saving || checkingSubscription}
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-lg py-6"
+                        >
+                            {saving || checkingSubscription ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    {checkingSubscription ? 'Checking...' : 'Saving...'}
+                                </>
+                            ) : (
+                                <>
+                                    {hasSubscription ? <Save className="w-5 h-5 mr-2" /> : <Lock className="w-5 h-5 mr-2" />}
+                                    {hasSubscription ? 'Save to My Recipes' : 'Subscribe to Save - $2.99/month'}
+                                </>
+                            )}
+                        </Button>
                     </CardContent>
                 </Card>
             )}
