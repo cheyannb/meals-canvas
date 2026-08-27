@@ -1,0 +1,57 @@
+{
+  "name": "Recipe",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who saved the recipe"
+    },
+    "title": {
+      "type": "string",
+      "description": "Name of the recipe"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of ingredients used"
+    },
+    "instructions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Step-by-step cooking instructions"
+    },
+    "prep_time": {
+      "type": "string",
+      "description": "Preparation time"
+    },
+    "cook_time": {
+      "type": "string",
+      "description": "Cooking time"
+    },
+    "servings": {
+      "type": "number",
+      "description": "Number of servings"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "URL of the generated recipe image"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "Easy",
+        "Medium",
+        "Hard"
+      ]
+    }
+  },
+  "required": [
+    "title",
+    "ingredients",
+    "instructions"
+  ]
+}
